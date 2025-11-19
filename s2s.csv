@@ -1,0 +1,27 @@
+,file,segment,signal,labels
+0,.\Spontanaktivität\filtered_BA0803901_segment_1.wav,1,[0.00013672 0.00057156 0.00014074 ... 0.         0.         0.        ],[0 0 0 ... 0 0 0]
+1,.\Spontanaktivität\filtered_BA0803901_segment_2.wav,1,"[-0.15103048 -0.17563717 -0.15806669 ...  0.          0.
+  0.        ]",[0 0 0 ... 0 0 0]
+2,.\Spontanaktivität\filtered_BA0803901_segment_3.wav,1,[0.03314614 0.03790412 0.03342945 ... 0.         0.         0.        ],[0 0 0 ... 0 0 0]
+3,.\Spontanaktivität\filtered_BP0803902_segment_1.wav,1,"[-0.00021533  0.00015242  0.00028474 ...  0.          0.
+  0.        ]",[0 0 0 ... 0 0 0]
+4,.\Spontanaktivität\filtered_HC280963_segment_1.wav,1,[0.01077433 0.01614283 0.01687195 ... 0.         0.         0.        ],[0 0 0 ... 0 0 0]
+5,.\Spontanaktivität\filtered_HC280963_segment_2.wav,1,[0.07964494 0.09221781 0.08241939 ... 0.         0.         0.        ],[0 0 0 ... 0 0 0]
+6,.\Spontanaktivität\filtered_LI06056410_segment_1.wav,1,[0.07701965 0.08899461 0.07940182 ... 0.         0.         0.        ],[0 0 0 ... 0 0 0]
+7,.\Spontanaktivität\filtered_LI0605644_segment_1.wav,1,[0.02289988 0.02557037 0.02187069 ... 0.         0.         0.        ],[0 0 0 ... 0 0 0]
+8,.\Spontanaktivität\filtered_LI0605645_segment_1.wav,1,[0.16669181 0.19402638 0.17539525 ... 0.         0.         0.        ],[0 0 0 ... 0 0 0]
+9,.\Spontanaktivität\filtered_LI0605645_segment_2.wav,1,[0.16597477 0.19021936 0.17030787 ... 0.         0.         0.        ],[0 0 0 ... 0 0 0]
+10,.\Spontanaktivität\filtered_LI0605645_segment_3.wav,1,[0.0770427  0.09022021 0.08207993 ... 0.         0.         0.        ],[0 0 0 ... 0 0 0]
+11,.\Spontanaktivität\filtered_LI0605645_segment_4.wav,1,[0.19172987 0.22151957 0.19855958 ... 0.         0.         0.        ],[0 0 0 ... 0 0 0]
+12,.\Spontanaktivität\filtered_LI0605648_segment_2.wav,1,"[ 0.08779009  0.09868173  0.08658875 ... -0.00442562 -0.00417277
+ -0.00367652]",[0 0 0 ... 0 0 0]
+13,.\Spontanaktivität\filtered_LI0605648_segment_2.wav,2,"[-0.00324705 -0.00317337 -0.0036456  ...  0.          0.
+  0.        ]",[0 0 0 ... 0 0 0]
+14,.\Spontanaktivität\filtered_QD161095_segment_5.wav,1,"[-0.03959544 -0.04814788 -0.04610125 ...  0.          0.
+  0.        ]",[0 0 0 ... 0 0 0]
+15,.\Spontanaktivität\filtered_RN181281_segment_1.wav,1,[0.06706235 0.07591548 0.06443304 ... 0.         0.         0.        ],[0 0 0 ... 0 0 0]
+16,.\Spontanaktivität\filtered_RN181281_segment_2.wav,1,"[-0.10893655 -0.12625732 -0.11322127 ...  0.          0.
+  0.        ]",[0 0 0 ... 0 0 0]
+17,.\Spontanaktivität\filtered_RN181281_segment_3.wav,1,"[-0.00861845 -0.01216986 -0.0126632  ...  0.04562811  0.0463255
+  0.04601746]",[1 1 1 ... 0 0 0]
+18,.\Spontanaktivität\filtered_RN181281_segment_3.wav,2,[0.04499757 0.04471935 0.04629373 ... 0.         0.         0.        ],[0 0 0 ... 0 0 0]
