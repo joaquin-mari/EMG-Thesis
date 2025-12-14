@@ -2,7 +2,7 @@ from scipy.signal import butter, filtfilt
 import tensorflow as tf
 from tensorflow.keras.callbacks import EarlyStopping
 import matplotlib.pyplot as plt
-from sklearn.metrics import classification_report, confusion_matrix, ConfusionMatrixDisplay
+from sklearn.metrics import classification_report, confusion_matrix, ConfusionMatrixDisplay, roc_auc_score, average_precision_score, jaccard_score
 import numpy as np
 from sklearn.metrics import precision_recall_curve
 from sklearn.utils.class_weight import compute_class_weight
@@ -82,6 +82,46 @@ def plot_confusion_matrix(y_true, y_pred, labels):
 
     print("\nClassification Report:")
     print(classification_report(y_true, y_pred, target_names=labels, zero_division=0))
+
+def get_extended_report(
+    y_true,
+    y_pred,
+    y_score=None,      
+    average="macro"      
+):
+    print("\nAdditional Metrics:")
+
+    # IoU (Jaccard Index)
+    iou = jaccard_score(y_true, y_pred, average=average)
+    print(f"IoU (Jaccard, {average}): {iou:.4f}")
+
+    if y_score is None:
+        print("ROC-AUC: skipped (no y_score provided)")
+        print("PR-AUC: skipped (no y_score provided)")
+        return
+
+    # ROC-AUC
+    try:
+        roc_auc = roc_auc_score(
+            y_true,
+            y_score,
+            multi_class="ovr",
+            average=average
+        )
+        print(f"ROC-AUC ({average}): {roc_auc:.4f}")
+    except ValueError:
+        print("ROC-AUC: not available (check y_score shape)")
+
+    # Precision-Recall AUC / Average Precision
+    try:
+        pr_auc = average_precision_score(
+            y_true,
+            y_score,
+            average=average
+        )
+        print(f"PR-AUC / Avg Precision ({average}): {pr_auc:.4f}")
+    except ValueError:
+        print("PR-AUC: not available (check y_score shape)")
 
 def find_optimal_threshold(y_true, y_prob):
     precision, recall, thresholds = precision_recall_curve(y_true, y_prob)
