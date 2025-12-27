@@ -7,6 +7,27 @@ import numpy as np
 from sklearn.metrics import precision_recall_curve
 from sklearn.utils.class_weight import compute_class_weight
 from sklearn.preprocessing import LabelEncoder
+import pandas as pd
+
+def perform_patient_split(
+    df,
+    patient_id="BA0803901",
+    file_col="file",
+    label_col="Label"
+):
+    files = df[file_col].astype(str).str.replace("\\", "/", regex=False)
+
+    test_mask = files.str.contains(patient_id)
+    train_mask = ~test_mask
+
+    if test_mask.sum() == 0:
+        raise ValueError(f"No samples found for patient_id={patient_id}")
+
+    y_train = df.loc[train_mask, label_col].values
+    y_test  = df.loc[test_mask, label_col].values
+
+    return train_mask.values, test_mask.values, y_train, y_test
+
 
 
 def butter_bandpass(lowcut, highcut, fs, order=4):
