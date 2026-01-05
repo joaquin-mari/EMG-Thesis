@@ -149,4 +149,31 @@ def find_optimal_threshold(y_true, y_prob):
     f1_scores = 2 * (precision * recall) / (precision + recall + 1e-10)
     return thresholds[np.argmax(f1_scores)]
 
+def to_binary(y_test, X_test, model):
+    # True labels
+    if len(y_test.shape) > 1:  
+        y_true_classes = np.argmax(y_test, axis=1)
+    else:
+        y_true_classes = y_test
+
+    # Predictions
+    y_pred = model.predict(X_test)
+
+    # If model outputs probabilities (keras): shape (n_samples, n_classes)
+    # If model outputs labels (sklearn RF): shape (n_samples,)
+    if len(np.array(y_pred).shape) > 1:
+        y_pred_classes = np.argmax(y_pred, axis=1)
+    else:
+        y_pred_classes = y_pred
+
+    # Grouping:
+    # Normal = Negative (1)
+    # Spontaneous activity = Fibrillation (0) + PSW (2)
+    y_true_grouped = np.where(y_true_classes == 1, 0, 1)
+    y_pred_grouped = np.where(y_pred_classes == 1, 0, 1)
+
+    grouped_labels = ['Normal', 'Spontaneous activity']
+
+    # Plot confusion matrix
+    plot_confusion_matrix(y_true_grouped, y_pred_grouped, grouped_labels)
 
