@@ -72,6 +72,7 @@ def get_class_weights(y_train):
     class_weights = dict(enumerate(cw))
     return class_weights
 
+
 def get_optimizer():
     optimizer = tf.keras.optimizers.Adam(learning_rate=1e-4)
     return optimizer
