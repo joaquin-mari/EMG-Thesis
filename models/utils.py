@@ -11,7 +11,7 @@ import pandas as pd
 
 def perform_patient_split(
     df,
-    patient_id="BA0803901",
+    patient_id="RN181281",
     file_col="file",
     label_col="Label"
 ):
@@ -178,3 +178,61 @@ def to_binary(y_test, X_test, model):
     # Plot confusion matrix
     plot_confusion_matrix(y_true_grouped, y_pred_grouped, grouped_labels)
 
+import numpy as np
+from sklearn.metrics import fbeta_score, f1_score
+
+def best_threshold_binary(y_true_bin, y_score, metric="f2", n_steps=1000, beta=2.0):
+    thresholds = np.linspace(0.0, 1.0, n_steps + 1)
+    best_t, best_s = 0.5, -1.0
+
+    for t in thresholds:
+        y_pred_bin = (y_score >= t).astype(np.int32)
+
+        if metric == "f1":
+            s = f1_score(y_true_bin, y_pred_bin, zero_division=0)
+        elif metric == "f2":
+            s = fbeta_score(y_true_bin, y_pred_bin, beta=beta, zero_division=0)
+        else:
+            raise ValueError("metric must be 'f1' or 'f2'")
+
+        if s > best_s:
+            best_s, best_t = s, t
+
+    return float(best_t), float(best_s)
+
+
+def fit_thresholds_one_vs_rest(y_val, y_prob_val, metric="f2", n_steps=1000):
+    """
+    Learns thresholds for class 1 (Fibrillation) and class 2 (PSW).
+    y_val:      (B,T) int in {0,1,2}
+    y_prob_val: (B,T,3) softmax probs
+    """
+    y_flat = y_val.reshape(-1)
+
+    thresholds = {}
+    for c in [1, 2]:
+        y_true_bin = (y_flat == c).astype(np.int32)
+        y_score = y_prob_val[..., c].reshape(-1)
+
+        beta = 3.0 if c == 1 else 2.0 
+        t, s = best_threshold_binary(y_true_bin, y_score, metric=metric, n_steps=n_steps, beta=beta)
+
+        thresholds[c] = {"t": t, "best_score": s, "beta": beta}
+    return thresholds
+
+def predict_with_two_thresholds(y_prob, t_fib, t_psw):
+    p1 = y_prob[..., 1]
+    p2 = y_prob[..., 2]
+
+    fib_ok = (p1 >= t_fib)
+    psw_ok = (p2 >= t_psw)
+
+    y_pred = np.zeros(p1.shape, dtype=np.int32)
+
+    y_pred[fib_ok & ~psw_ok] = 1
+    y_pred[psw_ok & ~fib_ok] = 2
+
+    both = fib_ok & psw_ok
+    y_pred[both] = np.where(p1[both] >= p2[both], 1, 2)
+
+    return y_pred
