@@ -8,6 +8,8 @@ from sklearn.metrics import precision_recall_curve
 from sklearn.utils.class_weight import compute_class_weight
 from sklearn.preprocessing import LabelEncoder
 import pandas as pd
+from sklearn.model_selection import train_test_split
+
 
 def perform_patient_split(
     df,
@@ -28,6 +30,31 @@ def perform_patient_split(
 
     return train_mask.values, test_mask.values, y_train, y_test
 
+
+def perform_random_split(
+    df,
+    label_col="Label",
+    test_size=0.2,
+    random_state=42,
+    stratify=True
+):
+    indices = df.index.values
+    labels = df[label_col].values
+
+    train_idx, test_idx = train_test_split(
+        indices,
+        test_size=test_size,
+        random_state=random_state,
+        stratify=labels if stratify else None
+    )
+
+    train_mask = df.index.isin(train_idx)
+    test_mask = df.index.isin(test_idx)
+
+    y_train = df.loc[train_mask, label_col].values
+    y_test = df.loc[test_mask, label_col].values
+
+    return train_mask, test_mask, y_train, y_test
 
 
 def butter_bandpass(lowcut, highcut, fs, order=4):
@@ -113,7 +140,6 @@ def get_extended_report(
 ):
     print("\nAdditional Metrics:")
 
-    # IoU (Jaccard Index)
     iou = jaccard_score(y_true, y_pred, average=average)
     print(f"IoU (Jaccard, {average}): {iou:.4f}")
 
@@ -122,7 +148,6 @@ def get_extended_report(
         print("PR-AUC: skipped (no y_score provided)")
         return
 
-    # ROC-AUC
     try:
         roc_auc = roc_auc_score(
             y_true,
@@ -134,7 +159,6 @@ def get_extended_report(
     except ValueError:
         print("ROC-AUC: not available (check y_score shape)")
 
-    # Precision-Recall AUC / Average Precision
     try:
         pr_auc = average_precision_score(
             y_true,
@@ -151,31 +175,23 @@ def find_optimal_threshold(y_true, y_prob):
     return thresholds[np.argmax(f1_scores)]
 
 def to_binary(y_test, X_test, model):
-    # True labels
     if len(y_test.shape) > 1:  
         y_true_classes = np.argmax(y_test, axis=1)
     else:
         y_true_classes = y_test
 
-    # Predictions
     y_pred = model.predict(X_test)
 
-    # If model outputs probabilities (keras): shape (n_samples, n_classes)
-    # If model outputs labels (sklearn RF): shape (n_samples,)
     if len(np.array(y_pred).shape) > 1:
         y_pred_classes = np.argmax(y_pred, axis=1)
     else:
         y_pred_classes = y_pred
 
-    # Grouping:
-    # Normal = Negative (1)
-    # Spontaneous activity = Fibrillation (0) + PSW (2)
     y_true_grouped = np.where(y_true_classes == 1, 0, 1)
     y_pred_grouped = np.where(y_pred_classes == 1, 0, 1)
 
     grouped_labels = ['Normal', 'Spontaneous activity']
 
-    # Plot confusion matrix
     plot_confusion_matrix(y_true_grouped, y_pred_grouped, grouped_labels)
 
 import numpy as np
@@ -202,11 +218,6 @@ def best_threshold_binary(y_true_bin, y_score, metric="f2", n_steps=1000, beta=2
 
 
 def fit_thresholds_one_vs_rest(y_val, y_prob_val, metric="f2", n_steps=1000):
-    """
-    Learns thresholds for class 1 (Fibrillation) and class 2 (PSW).
-    y_val:      (B,T) int in {0,1,2}
-    y_prob_val: (B,T,3) softmax probs
-    """
     y_flat = y_val.reshape(-1)
 
     thresholds = {}
